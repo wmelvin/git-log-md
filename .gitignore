@@ -1,0 +1,11 @@
+# Private archives, notes, etc.
+private/
+notes-private.txt
+
+# Python.
+venv/
+__pycache__/
+
+# Tools config.
+.idea/
+.vscode/
