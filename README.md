@@ -2,6 +2,14 @@
 
 Uses `git log` to create a Markdown document listing the message, hash, and timestamp for each commit.
 
+---
+
+This tool was created to explore documenting a series of commits along with other details about the changes. This provides a way to add notes and links related to a commit, or a group of commits, after the fact. An example use of the output from this tool is in the [Coursework Links and Commits](https://github.com/wmelvin/pub-py-pkg/blob/main/devnotes.md#coursework-links-and-commits) section of `devnotes.md` in the [wmelvin/pub-py-pkg](https://github.com/wmelvin/pub-py-pkg/tree/main) repository. 
+
+ For a large project, or one with multiple comtributors, it makes sense to use an **issue tracker** and reference **issue tags** in commit messages. When making a series of small commits, in a learning project or coursework, it seems like using *issues* would add unnecessary overhead. 
+
+---
+
 A task list *completed item* checkmark can be added in front of commit the message using the `--do-mark` switch.
 
 GitHub Docs: [About task lists](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/about-task-lists#creating-task-lists)
