@@ -4,23 +4,24 @@ import argparse
 import shutil
 import subprocess
 import sys
-
-from collections import namedtuple
-from pathlib import Path
 from datetime import datetime
-
+from pathlib import Path
+from typing import NamedTuple
 
 app_name = Path(__file__).name
 
-app_version = "230823.1"
+app_version = "2024.01.1"
 
 run_dt = datetime.now()
 
 
-AppOptions = namedtuple(
-    "AppOptions",
-    "run_dir, repo_url, output_file, git_out, do_mark, do_sup",
-)
+class AppOptions(NamedTuple):
+    run_dir: Path
+    repo_url: str
+    output_file: Path
+    git_out: bool
+    do_mark: bool
+    do_sup: bool
 
 
 def get_args(argv):
@@ -99,10 +100,7 @@ def get_opts(argv) -> AppOptions:
         sys.stderr.write(f"ERROR - Not a directory: '{dir_path}'\n")
         sys.exit(1)
 
-    if args.repo_url:
-        repo_url = args.repo_url
-    else:
-        repo_url = ""
+    repo_url = args.repo_url if args.repo_url else ""
 
     if args.file_name is None:
         out_path = Path.cwd() / "git-log-output.md"
@@ -125,7 +123,7 @@ def get_opts(argv) -> AppOptions:
 
 
 def run_git(opts: AppOptions, args) -> subprocess.CompletedProcess:
-    assert isinstance(args, list)
+    assert isinstance(args, list)  # noqa: S101
 
     git_exe = shutil.which("git")
 
@@ -135,14 +133,15 @@ def run_git(opts: AppOptions, args) -> subprocess.CompletedProcess:
         )
         sys.exit(1)
 
-    cmds = [git_exe] + args
+    cmds = [git_exe, *args]
 
     result = subprocess.run(
-        cmds,
+        cmds,  # noqa: S603
         cwd=str(opts.run_dir),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        universal_newlines=True,
+        text=True,
+        check=True,
     )
 
     if opts.git_out:
@@ -166,23 +165,20 @@ def as_markdown(opts: AppOptions, git_output: str) -> str:
         sup1 = ""
         sup2 = ""
 
-    if opts.do_mark:
-        marker = "- [x] "
-    else:
-        marker = ""
+    marker = "- [x] " if opts.do_mark else ""
 
     for line in lines:
-        hash, ahash, dts, msg = line.strip('"').split(" ", 3)
+        commit_hash, abbrev_hash, dts, msg = line.strip('"').split(" ", 3)
         dt = datetime.fromisoformat(dts).strftime("%Y-%m-%d %H:%M:%S")
         if opts.repo_url:
-            url = f"{opts.repo_url}/commit/{hash}"
+            url = f"{opts.repo_url}/commit/{commit_hash}"
             text = (
-                f"{marker}**{msg}**\n{sup1}Commit [{ahash}]({url}) ({dt})"
+                f"{marker}**{msg}**\n{sup1}Commit [{abbrev_hash}]({url}) ({dt})"
                 f"{sup2}\n\n---\n"
             )
         else:
             text = (
-                f"{marker}**{msg}**\n{sup1}Commit *{ahash}* ({dt})"
+                f"{marker}**{msg}**\n{sup1}Commit *{abbrev_hash}* ({dt})"
                 f"{sup2}\n\n---\n"
             )
         md.append(text)
@@ -216,17 +212,16 @@ def main(argv):
 
     if result is None:
         print("ERROR: Failed to run git command.")
-    else:
-        if result.returncode == 0:
+    elif result.returncode == 0:
             doc = as_markdown(opts, result.stdout)
             print(f"\nWriting '{opts.output_file}'\n")
             opts.output_file.write_text(doc)
-        else:
-            print(f"ERROR ({result.returncode})")
-            if result.stderr is not None:
-                print(f"STDERR:\n{result.stderr}\n")
-            if result.stdout is not None:
-                print(f"STDOUT:\n{result.stdout}\n")
+    else:
+        print(f"ERROR ({result.returncode})")
+        if result.stderr is not None:
+            print(f"STDERR:\n{result.stderr}\n")
+        if result.stdout is not None:
+            print(f"STDOUT:\n{result.stdout}\n")
 
     return 0
 
