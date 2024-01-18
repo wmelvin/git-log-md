@@ -24,7 +24,7 @@ class AppOptions(NamedTuple):
     do_sup: bool
 
 
-def get_args(argv):
+def get_args(arglist=None):
     ap = argparse.ArgumentParser(
         description="Create a markdown listing commits to a Git repository "
         "at a given path."
@@ -85,11 +85,11 @@ def get_args(argv):
         help="Add superscript tags around the commit hash and date.",
     )
 
-    return ap.parse_args(argv[1:])
+    return ap.parse_args(arglist)
 
 
-def get_opts(argv) -> AppOptions:
-    args = get_args(argv)
+def get_opts(arglist=None) -> AppOptions:
+    args = get_args(arglist)
 
     if args.dir_name is None:
         dir_path = Path.cwd()
@@ -108,9 +108,7 @@ def get_opts(argv) -> AppOptions:
         out_path = Path(args.file_name).expanduser().resolve()
 
     if not out_path.parent.exists():
-        sys.stderr.write(
-            f"ERROR - Cannot find output directory: '{out_path.parent}'\n"
-        )
+        sys.stderr.write(f"ERROR - Cannot find output directory: '{out_path.parent}'\n")
         sys.exit(1)
 
     if args.dt_tag:
@@ -186,10 +184,10 @@ def as_markdown(opts: AppOptions, git_output: str) -> str:
     return "\n".join(md)
 
 
-def main(argv):
+def main(arglist=None):
     print(f"\n{app_name} (v.{app_version})")
 
-    opts = get_opts(argv)
+    opts = get_opts(arglist)
 
     print(f"\nRun 'git log' in '{opts.run_dir}'")
 
@@ -213,9 +211,9 @@ def main(argv):
     if result is None:
         print("ERROR: Failed to run git command.")
     elif result.returncode == 0:
-            doc = as_markdown(opts, result.stdout)
-            print(f"\nWriting '{opts.output_file}'\n")
-            opts.output_file.write_text(doc)
+        doc = as_markdown(opts, result.stdout)
+        print(f"\nWriting '{opts.output_file}'\n")
+        opts.output_file.write_text(doc)
     else:
         print(f"ERROR ({result.returncode})")
         if result.stderr is not None:
@@ -227,4 +225,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main()
