@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 app_name = Path(__file__).name
 
-app_version = "2024.01.1"
+__version__ = "0.1.dev2"
 
 run_dt = datetime.now()
 
@@ -139,7 +139,7 @@ def run_git(opts: AppOptions, args) -> subprocess.CompletedProcess:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        check=True,
+        check=False,
     )
 
     if opts.git_out:
@@ -185,7 +185,7 @@ def as_markdown(opts: AppOptions, git_output: str) -> str:
 
 
 def main(arglist=None):
-    print(f"\n{app_name} (v.{app_version})")
+    print(f"\n{app_name} (v{__version__})")
 
     opts = get_opts(arglist)
 
