@@ -46,4 +46,10 @@ select = [
     "W"     # Warning
 ]
 ignore = ["ISC001"]  # single-line-implicit-string-concatenation
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "ruff>=0.11.8",
+]
 # extend-select = ["ALL"]

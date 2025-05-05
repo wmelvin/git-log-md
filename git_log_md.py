@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 app_name = Path(__file__).name
 
-__version__ = "0.1.dev2"
+__version__ = "0.1.dev3"
 
 run_dt = datetime.now()
 
@@ -66,16 +66,14 @@ def get_args(arglist=None):
         "--git-out",
         dest="git_out",
         action="store_true",
-        help="Print the output (STDOUT and STDERR) from running the 'git log' "
-        "command.",
+        help="Print the output (STDOUT and STDERR) from running the 'git log' command.",
     )
 
     ap.add_argument(
         "--do-mark",
         dest="do_mark",
         action="store_true",
-        help="Add a task-list-completed-item checkmark in front of the "
-        "commit message.",
+        help="Add a task-list-completed-item checkmark in front of the commit message.",
     )
 
     ap.add_argument(
@@ -133,8 +131,8 @@ def run_git(opts: AppOptions, args) -> subprocess.CompletedProcess:
 
     cmds = [git_exe, *args]
 
-    result = subprocess.run(
-        cmds,  # noqa: S603
+    result = subprocess.run(  # noqa: S603
+        cmds,
         cwd=str(opts.run_dir),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -176,8 +174,7 @@ def as_markdown(opts: AppOptions, git_output: str) -> str:
             )
         else:
             text = (
-                f"{marker}**{msg}**\n{sup1}Commit *{abbrev_hash}* ({dt})"
-                f"{sup2}\n\n---\n"
+                f"{marker}**{msg}**\n{sup1}Commit *{abbrev_hash}* ({dt}){sup2}\n\n---\n"
             )
         md.append(text)
 

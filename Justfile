@@ -10,19 +10,19 @@
 
 # Run lint, check, and pyproject-build
 @build: lint check
-  pipenv run pyproject-build
+  uv build
 
 #  Run ruff format --check
 @check:
-  pipenv run ruff format --check
+  uv run ruff format --check
 
 # Run check and lint
 @checks: check lint
 
 # Run ruff format
 @format: lint
-  pipenv run ruff format
+  uv run ruff format
 
 # Run ruff check
 @lint:
-  pipenv run ruff check
+  uv run ruff check
