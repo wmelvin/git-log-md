@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 app_name = Path(__file__).name
 
-__version__ = "0.1.dev3"
+__version__ = "0.1.dev4"
 
 run_dt = datetime.now()
 
