@@ -8,9 +8,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
-app_name = Path(__file__).name
+app_name = "git_log_md"
 
-__version__ = "0.1.dev4"
+__version__ = "0.1.dev5"
 
 run_dt = datetime.now()
 
@@ -22,10 +22,12 @@ class AppOptions(NamedTuple):
     git_out: bool
     do_mark: bool
     do_sup: bool
+    do_csv: bool
 
 
 def get_args(arglist=None):
     ap = argparse.ArgumentParser(
+        prog=app_name,
         description="Create a markdown listing commits to a Git repository "
         "at a given path."
     )
@@ -83,6 +85,13 @@ def get_args(arglist=None):
         help="Add superscript tags around the commit hash and date.",
     )
 
+    ap.add_argument(
+        "--csv",
+        dest="do_csv",
+        action="store_true",
+        help="Also write a CSV file.",
+    )
+
     return ap.parse_args(arglist)
 
 
@@ -114,7 +123,13 @@ def get_opts(arglist=None) -> AppOptions:
         out_path = out_path.with_suffix(f".{dt}{out_path.suffix}")
 
     return AppOptions(
-        dir_path, repo_url, out_path, args.git_out, args.do_mark, args.do_sup
+        dir_path,
+        repo_url,
+        out_path,
+        args.git_out,
+        args.do_mark,
+        args.do_sup,
+        args.do_csv,
     )
 
 
@@ -181,6 +196,19 @@ def as_markdown(opts: AppOptions, git_output: str) -> str:
     return "\n".join(md)
 
 
+def as_csv(opts: AppOptions, git_output: str) -> str:
+    lines = git_output.split("\n")
+
+    csv_lines = ["Commit,Author_Date,Message,GitHub_URL"]
+
+    for line in lines:
+        commit_hash, abbrev_hash, dts, msg = line.strip('"').split(" ", 3)
+        url = f"{opts.repo_url}/commit/{commit_hash}" if opts.repo_url else ""
+        csv_lines.append(f'"{abbrev_hash}","{dts}","{msg}","{url}"')
+
+    return "\n".join(csv_lines)
+
+
 def main(arglist=None):
     print(f"\n{app_name} (v{__version__})")
 
@@ -208,9 +236,14 @@ def main(arglist=None):
     if result is None:
         print("ERROR: Failed to run git command.")
     elif result.returncode == 0:
-        doc = as_markdown(opts, result.stdout)
+        git_output = result.stdout
+        # doc = as_markdown(opts, git_output)
         print(f"\nWriting '{opts.output_file}'\n")
-        opts.output_file.write_text(doc)
+        opts.output_file.write_text(as_markdown(opts, git_output))
+        if opts.do_csv:
+            csv_file = opts.output_file.with_suffix(".csv")
+            print(f"\nWriting '{csv_file}'\n")
+            csv_file.write_text(as_csv(opts, git_output))
     else:
         print(f"ERROR ({result.returncode})")
         if result.stderr is not None:

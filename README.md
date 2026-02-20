@@ -21,9 +21,9 @@ GitHub Docs: [styling text](https://docs.github.com/en/get-started/writing-on-gi
 ### Command-Line Usage
 
 ```
-usage: git_log_md.py [-h] [-u REPO_URL] [-o FILE_NAME] [-t] [--git-out]
-                     [--do-mark] [--do-sup]
-                     [dir_name]
+usage: git_log_md [-h] [-u REPO_URL] [-o FILE_NAME] [-t] [--git-out]
+                  [--do-mark] [--do-sup] [--csv]
+                  [dir_name]
 
 Create a markdown listing commits to a Git repository at a given path.
 
@@ -32,9 +32,9 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -u REPO_URL, --repo-url REPO_URL
+  -u, --repo-url REPO_URL
                         GitHub repository URL.
-  -o FILE_NAME, --output FILE_NAME
+  -o, --output FILE_NAME
                         Name of output file.
   -t, --timestamp       Add a timestamp (date_time) tag to the output file
                         name.
@@ -43,6 +43,7 @@ options:
   --do-mark             Add a task-list-completed-item checkmark in front of
                         the commit message.
   --do-sup              Add superscript tags around the commit hash and date.
+  --csv                 Also write a CSV file.
 ```
 
 ### Reference 

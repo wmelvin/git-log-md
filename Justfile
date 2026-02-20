@@ -21,6 +21,10 @@
 @format: lint
   uv run ruff format
 
+# Redirect 'git_log_md -h' to temp.txt
+@help:
+  uv run git_log_md -h > temp.txt
+
 # Run ruff check
 @lint:
   uv run ruff check
