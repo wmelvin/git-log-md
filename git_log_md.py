@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 app_name = "git_log_md"
 
-__version__ = "0.1.dev5"
+__version__ = "0.1.1"
 
 run_dt = datetime.now()
 
@@ -29,7 +29,7 @@ def get_args(arglist=None):
     ap = argparse.ArgumentParser(
         prog=app_name,
         description="Create a markdown listing commits to a Git repository "
-        "at a given path."
+        "at a given path.",
     )
 
     ap.add_argument(

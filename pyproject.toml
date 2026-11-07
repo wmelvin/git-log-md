@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "git-log-md"
 dynamic = ["version"]
 description = 'Command-line utility uses git log to create a Markdown document listing the message, hash, and timestamp for each commit.'
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
 keywords = [ "git", "git log", "documentation tool", "markdown" ]
 authors = [
   { name = "Bill Melvin", email = "bill@billmelvin.com" },
