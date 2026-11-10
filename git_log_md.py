@@ -250,9 +250,10 @@ def main(arglist=None):
             print(f"STDERR:\n{result.stderr}\n")
         if result.stdout is not None:
             print(f"STDOUT:\n{result.stdout}\n")
+        return result.returncode
 
     return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
